@@ -4,8 +4,54 @@
 export APP_PORT=${APP_PORT:-8888}
 export DB_PORT=${DB_PORT:-33061}
 
-if [ $# -gt 0 ];then
-	docker-compose "$@"
+COMPOSE="docker-compose"
+
+if [ $# -gt 0 ]; then
+	if [ "$1" == "art" ]; then
+		shift 1
+		$COMPOSE run --rm \
+			-w /var/www/html \
+			app \
+			php artisan "$@"
+
+	# If "composer" is used, pass-thru to "composer"
+	# inside a new container
+	elif [ "$1" == "composer" ]; then
+		shift 1
+		$COMPOSE run --rm \
+			-w /var/www/html \
+			app \
+			composer "$@"
+
+	# If "test" is used, run unit tests,
+	# pass-thru any extra arguments to php-unit
+	elif [ "$1" == "test" ]; then
+		shift 1
+		$COMPOSE run --rm \
+			-w /var/www/html \
+			app \
+			./vendor/bin/phpunit "$@"
+
+	# If "npm" is used, run npm
+	# from our node container
+	elif [ "$1" == "npm" ]; then
+		shift 1
+		$COMPOSE run --rm \
+			-w /var/www/html \
+			node \
+			npm "$@"
+
+	# If "gulp" is used, run gulp
+	# from our node container
+	elif [ "$1" == "gulp" ]; then
+		shift 1
+		$COMPOSE run --rm \
+			-w /var/www/html \
+			node \
+			./node_modules/.bin/gulp "$@"
+	else
+		$COMPOSE "$@"
+	fi
 else
-	docker-compose ps
+	$COMPOSE ps
 fi
