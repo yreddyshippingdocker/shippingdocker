@@ -3,8 +3,8 @@ FROM ubuntu:16.04
 MAINTAINER Daniel Lucas
 
 RUN apt-get update \
-    && apt-get install -y locales \ 
-       locale-gen en_US.UTF-8
+    && apt-get install -y locales locales-all\ 
+    && locale-gen en_US.UTF-8
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
