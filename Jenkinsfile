@@ -1,6 +1,7 @@
 #!/usr/bin/env groovy
 
 node('master') {
+try{
     stage('build') {
         git url: 'git@github.com:yreddyshippingdocker/shippingdocker.git'
         // Start services (Let docker-compose build containers for testing)
@@ -19,4 +20,10 @@ node('master') {
     stage('test') {
         sh "APP_ENV=testing ./develop test"
     }
+  }
+}catch(error) {
+	throw error
+}
+finally {
+	sh './develop down'
 }
