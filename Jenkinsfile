@@ -20,10 +20,11 @@ try {
     stage('test') {
         sh "APP_ENV=testing ./develop test"
     }
-  }
+  
 } catch(error) {
 	throw error
 }
 finally {
 	sh './develop down'
+}
 }
